@@ -1,5 +1,7 @@
 
-    const API_URL = 'http://localhost:5000/api';
+    const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+      ? 'http://localhost:5000/api' 
+      : 'https://ai-money-mentor-sdoz.onrender.com/api';
 
     function getUsers() {
       try { return JSON.parse(localStorage.getItem('amm_users') || '{}'); } catch (e) { return {}; }
