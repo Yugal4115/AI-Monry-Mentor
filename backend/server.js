@@ -22,8 +22,7 @@ app.use(express.static(path.join(__dirname, '../frontend'), {
 }));
 
 app.get("/", (req, res) => {
-  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.sendFile(path.join(__dirname, '../frontend/AI MONRY MENTOR.html'));
+  res.send("Backend running");
 });
 
 
@@ -66,4 +65,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
