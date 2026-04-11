@@ -39,11 +39,25 @@ async function askLLM(prompt, fallback, retries = 3) {
 
 /**
  * Chat endpoint — multi-turn conversation with retry on 429
+ * @param {string} message
+ * @param {Array}  history          Previous chat messages
+ * @param {Array}  semanticContext  Similar past finance entries from vector search
+ * @param {number} retries
  */
-async function getChatResponse(message, history = [], retries = 3) {
+async function getChatResponse(message, history = [], semanticContext = [], retries = 3) {
   const delays = [3000, 7000, 15000];
+
+  // Build context block from semantic memory results (if any)
+  const contextBlock =
+    semanticContext.length > 0
+      ? `\n\nRELEVANT PAST FINANCE PATTERNS FROM THIS USER:\n` +
+        semanticContext.map((r, i) => `${i + 1}. ${r.text}`).join("\n") +
+        `\n\nUse these patterns as context to give more personalised advice.`
+      : "";
+
   const systemPrompt =
-    "You are Savira, a helpful and friendly personal finance advisor specializing in Indian markets. You give actionable advice about savings, SIPs, taxes, mutual funds, and FIRE planning. Keep responses concise (2-4 sentences). Use ₹ symbol for Indian currency.";
+    "You are Savira, a helpful and friendly personal finance advisor specializing in Indian markets. You give actionable advice about savings, SIPs, taxes, mutual funds, and FIRE planning. Keep responses concise (2-4 sentences). Use ₹ symbol for Indian currency." +
+    contextBlock;
 
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
